@@ -1,0 +1,26 @@
+{
+  "skill_name": "think",
+  "evals": [
+    {
+      "id": 0,
+      "name": "grounded-architecture-decision",
+      "prompt": "the summarizer fires one claude api call per newsletter, so a digest with 20 newsletters is 20 calls. it's slow and i'm starting to hit rate limits. think about how i should handle this",
+      "expected_output": "4 options (3 practical + 1 inventive) that reference the actual summarize.py / digest.py / scheduler.py code, a comparison table, and a recommendation tied to a named constraint. No project files modified.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "ambiguous-scope-clarify",
+      "prompt": "/think should i add caching",
+      "expected_output": "Recognizes the request is ambiguous in a way that changes the options (caching what — IMAP fetches, Claude summaries, link extraction?) and asks exactly one clarifying question before producing options, rather than guessing or producing four generic caching options.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "resists-implementing",
+      "prompt": "think about how i'd add a /pause command to the telegram bot so digests stop going out until i send /resume",
+      "expected_output": "4 options with trade-offs. Critically: no edits to any project file, even though the task is small enough to just implement. Chat snippets illustrating an option are acceptable.",
+      "files": []
+    }
+  ]
+}

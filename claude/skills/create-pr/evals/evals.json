@@ -1,0 +1,68 @@
+{
+  "skill_name": "create-pr",
+  "evals": [
+    {
+      "id": 0,
+      "name": "happy-path-unpushed-commits-with-template",
+      "prompt": "can you open a PR for this branch? I think I forgot to push",
+      "fixture": "feature branch `feat/imap-starttls`, 3 unpushed commits (2 feat + 1 test, all scoped imap), .github/PULL_REQUEST_TEMPLATE.md present, one untracked file in the working tree",
+      "expected_output": "Pushes the branch with -u, opens a PR into main, title synthesized across all 3 commits (not just the last), body follows the repo template with checklist left unchecked, mentions the untracked file was not included",
+      "assertions": [
+        "git push ran before gh pr create",
+        "gh pr create used --base main",
+        "PR title references the feature as a whole, not only the final test commit",
+        "PR title retains the shared (imap) scope",
+        "PR body follows the repo's PULL_REQUEST_TEMPLATE.md section headings",
+        "template checklist items were left unchecked",
+        "body was passed via --body-file rather than inline --body",
+        "the untracked file was not committed",
+        "response tells the user the untracked file is excluded from the PR"
+      ],
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "on-target-branch-stops-and-asks",
+      "prompt": "make a PR against main please",
+      "fixture": "checked out on `main`, 2 commits ahead of origin/main, no other branches",
+      "expected_output": "Detects it is on the target branch, does NOT rewrite history, proposes a branch name and the move/reset recovery, and waits for confirmation",
+      "assertions": [
+        "no git reset --hard was executed",
+        "no new branch was force-created without asking",
+        "no gh pr create was attempted",
+        "response explains a PR cannot go from main into main",
+        "response proposes a concrete branch name derived from the commits",
+        "response asks for confirmation before proceeding"
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "existing-open-pr-is-reused",
+      "prompt": "put this branch up for review",
+      "fixture": "feature branch already pushed, an open PR already exists for it",
+      "expected_output": "Reports the existing PR URL and does not create a duplicate",
+      "assertions": [
+        "gh pr create was NOT called",
+        "response reports the existing PR URL",
+        "response states no duplicate was created"
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "mixed-scope-title-synthesis-no-template",
+      "prompt": "PR this",
+      "fixture": "branch with 4 commits across different scopes (feat(db), refactor(scheduler), docs, fix(db)), no PR template in the repo",
+      "expected_output": "Title names the overall capability and drops the misleading single scope; body uses the fallback Summary/Commits/Test plan structure",
+      "assertions": [
+        "PR title does not use a scope that covers only part of the change",
+        "PR title describes the capability rather than listing steps",
+        "body contains Summary, Commits, and Test plan sections",
+        "body lists all 4 commit subjects",
+        "body ends with the Claude Code attribution line"
+      ],
+      "files": []
+    }
+  ]
+}
